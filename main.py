@@ -2,6 +2,7 @@ import os.path
 from tkinter.filedialog import askdirectory
 from typing import List
 from gearswap import GearSwapLuaFile
+from windower import WindowerResources
 
 
 def get_windower_path() -> str:
@@ -17,7 +18,7 @@ def get_lua_filenames_from_dir(path: str) -> List[str]:
 
 if __name__ == "__main__":
     windower_path = get_windower_path()
-    items_lua = os.path.join(windower_path, 'res', 'items.lua')
+    windower_resources = WindowerResources(windower_path)
     gearswap_data_path = os.path.join(windower_path, 'addons', 'GearSwap', 'data')
     findall_data_path = os.path.join(windower_path, 'addons', 'findAll', 'data')
 
