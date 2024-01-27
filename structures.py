@@ -65,7 +65,7 @@ class GearList:
 
     def add_item(self, item: Item):
         if item.get_category().lower() in self._GEAR_CATEGORIES:
-            self._items.setdefault(__key=item.get_id(), __default=item)
+            self._items.update(__key=item.get_id(), __default=item)
 
 
 class Character:
