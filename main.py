@@ -42,7 +42,27 @@ def remove_surrounding_quotes(string: str) -> str:
     return string
 
 
+def get_character_name_from_gearswap_lua(filename_without_path: str):
+    filename_split_by_underscore = filename_without_path.split('_')
+    if len(filename_split_by_underscore) == 2:
+        job_maybe, file_ext = os.path.splitext(filename_split_by_underscore[1])
+        if len(job_maybe) == 3 and job_maybe.isupper():
+            return filename_split_by_underscore[0]
+    return None
+
+
 def get_equipment_from_gearswap_lua(filename: str):
+    result = {
+        'filename': None,
+        'character_name': None,
+        'equipment': [],
+        'variables': []
+    }
+
+    filename_without_path = os.path.split(filename)[-1]
+    result['filename'] = filename_without_path
+    result['character_name'] = get_character_name_from_gearswap_lua(filename_without_path)
+
     with open(filename, 'r') as file:
         for line in file:
             if line.strip().startswith(LUA_COMMENT_OPERATOR):
@@ -53,13 +73,14 @@ def get_equipment_from_gearswap_lua(filename: str):
                 if len(terms) >= 2 and terms[1] != EMPTY_SLOT:
                     terms[1] = terms[1].split(LUA_COMMENT_OPERATOR)[0].strip()  # remove trailing comments
                     if is_quoted(terms[1]):
-                        terms[1] = remove_surrounding_quotes(terms[1])
-                        print(terms[1])
+                        unquoted = remove_surrounding_quotes(terms[1])
+                        if len(terms[1]) > len(unquoted):
+                            result['equipment'].append(unquoted)
                     else:
-                        print(f"VARIABLE: {terms[1]}")
-            # elif re.search(GEARSWAP_AUGMENTED_ITEM_DEFINITION, line):
-
-    return ''
+                        # TODO: Attempt to look up variable's item name
+                        # if re.search(GEARSWAP_AUGMENTED_ITEM_DEFINITION, line):
+                        result['variables'].append(terms[1])
+    return result
 
 
 def get_lua_filenames_from_dir(path: str) -> List[str]:
@@ -81,7 +102,6 @@ if __name__ == "__main__":
     findall_luas = get_lua_filenames_from_dir(findall_data_path)
 
     for gearswap_lua in gearswap_luas:
-        print(gearswap_lua)
         print(get_equipment_from_gearswap_lua(gearswap_lua))
         # TODO: parse sets
         # TODO: If sets were found, save key with character namegear as a set
