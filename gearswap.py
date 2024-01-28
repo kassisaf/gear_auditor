@@ -61,7 +61,7 @@ class GearSwapLuaFile:
                 self.job = job_maybe
 
     def _parse_equipment_and_variables(self):
-        with open(self._file_path, 'r') as file:
+        with open(self._file_path, 'r', encoding='utf8') as file:
             for line in file:
                 if line.strip().startswith(LUA_COMMENT_OPERATOR):
                     continue
