@@ -1,4 +1,8 @@
+import re
 import os
+
+CONTAINER_PATTERN = r'\["([\w\d ]+)"\] = {'
+ITEM_PATTERN = r'^\s*\["([\w\d ]+)"\] = (\d+)\,?[\r\n\s]*$'
 
 
 class FindAllLuaFile:
@@ -6,48 +10,34 @@ class FindAllLuaFile:
         self._file_path = file_path
         self._filename = os.path.split(file_path)[-1]
         self._character_name = os.path.splitext(self._filename[0])
+        self._gil = -1
+        self._items = {}
 
-    # TODO: parse out item ids and locations
-    # example format:
+        self._parse()
 
-    """
-    return {
-    ["gil"] = 49410766,
-    ["slip 24"] = {
-      },
-    ["slip 08"] = {
-      ["11708"] = 1,
-      ["12103"] = 1,
-      ["12025"] = 1,
-      ["11709"] = 1,
-      ["19255"] = 1,
-      ["11721"] = 1,
-      ["12096"] = 1,
-      ["16208"] = 1,
-      ["11719"] = 1,
-      ["11718"] = 1,
-      ["11750"] = 1,
-      ["12105"] = 1,
-      ["12016"] = 1,
-      ["11710"] = 1,
-      ["11715"] = 1,
-      ["11714"] = 1,
-      ["11706"] = 1,
-      ["16204"] = 1,
-      ["11705"] = 1,
-      ["11703"] = 1,
-      ["12095"] = 1,
-      ["11617"] = 1,
-      ["19253"] = 1,
-      ["12085"] = 1,
-      ["19260"] = 1,
-      ["16209"] = 1,
-      ["16203"] = 1,
-      ["19254"] = 1,
-      ["12045"] = 1,
-      },
-    ["slip 12"] = {
-      },
-    ["key items"] = {
-    ...
-    """
+    def __str__(self):
+        return f"{self._filename} {self.__class__}"
+
+    def _parse(self):
+        with open(self._file_path, 'r', encoding='utf8') as file:
+            current_container = None
+            for line in file:
+                container_match = re.match(CONTAINER_PATTERN, line)
+                if container_match:
+                    current_container = container_match.group(1)
+                    self._items[current_container] = {}
+                    continue
+                item_match = re.match(ITEM_PATTERN, line)
+                if item_match:
+                    item_id = item_match.group(1)
+                    quantity = int(item_match.group(2))
+                    if item_id == 'gil':
+                        self._gil = quantity
+                        continue
+
+                    item_id = int(item_id)
+                    if item_id not in self._items[current_container]:
+                        self._items[current_container][item_id] = quantity
+                    else:
+                        self._items[current_container][item_id] += quantity
+        print(self._items)
