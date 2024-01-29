@@ -23,9 +23,9 @@ EQUIPMENT_SLOTS = [
     'neck',
     'waist',
 ]
-AUGMENTED_ITEM_PATTERN = r'{\s*(name)=\s*"(.+)",\s*augments\s*='
-JOB_ABBREVIATION_PATTERN = r'^[A-Z]{3}$'
-GEAR_SLOT_PATTERN = f"({'|'.join([f'({slot})' for slot in EQUIPMENT_SLOTS])})" + r"\s*=\s*"
+AUGMENTED_ITEM_RE = re.compile(r'{\s*(name)=\s*"(.+)",\s*augments\s*=')
+JOB_ABBREVIATION_RE = re.compile(r'^[A-Z]{3}$')
+GEAR_SLOT_RE = re.compile(f"({'|'.join([f'({slot})' for slot in EQUIPMENT_SLOTS])})" + r"\s*=\s*")
 
 
 class GearSwapLuaFile:
@@ -60,7 +60,7 @@ class GearSwapLuaFile:
             return self._character_name.lower() == character_name.lower()
         except AttributeError:  # occurs when a character name could not be parsed from the filename (will be None)
             filename_without_extension = os.path.splitext(self._filename)[0]
-            return re.match(JOB_ABBREVIATION_PATTERN, filename_without_extension)
+            return JOB_ABBREVIATION_RE.match(filename_without_extension)
 
     def contains_item(self, item_dict: dict) -> bool:
         for language in Language:
@@ -82,7 +82,7 @@ class GearSwapLuaFile:
                 if line.strip().startswith(LUA_COMMENT_OPERATOR):
                     continue
 
-                if re.search(GEAR_SLOT_PATTERN, line):
+                if GEAR_SLOT_RE.search(line):
                     terms = [term.strip().replace(',', '') for term in line.split('=')]
                     if len(terms) >= 2 and terms[1] != EMPTY_SLOT:
                         terms[1] = terms[1].split(LUA_COMMENT_OPERATOR)[0].strip()  # remove trailing comments
@@ -92,7 +92,7 @@ class GearSwapLuaFile:
                                 self._equipment_names.append(unquoted.lower())
                         else:
                             # TODO: Attempt to look up variable's item name
-                            # if re.search(AUGMENTED_ITEM_PATTERN, line):
+                            # if AUGMENTED_ITEM_PATTERN.search(line):
                             self._equipment_variables.append(terms[1])
         self._equipment_names = list(set(self._equipment_names))
         self._equipment_variables = list(set(self._equipment_variables))

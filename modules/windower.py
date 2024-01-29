@@ -4,7 +4,7 @@ from enum import Enum
 
 from modules.helpers import remove_surrounding_quotes
 
-ITEM_LINE_PATTERN = r"^\s*\[\d+\] = {(.+)},$"
+ITEM_LINE_RE = re.compile(r"^\s*\[\d+] = {(.+)},$")
 NUMERIC_ITEM_PROPS = [
     'id',
     'flags',
@@ -57,7 +57,7 @@ class WindowerResources:
         with open(items_lua, 'r', encoding='utf8') as file:
             for line in file:
                 # Look for lines with item definitions
-                match = re.match(ITEM_LINE_PATTERN, line)
+                match = ITEM_LINE_RE.match(line)
                 if match:
                     # Build an item dict from the current line's lua table
                     item_props = match.group(1).split(',')

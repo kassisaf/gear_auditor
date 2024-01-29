@@ -1,8 +1,8 @@
 import os.path
 import re
 
-CONTAINER_PATTERN = r'\["([\w\d ]+)"\] = {'
-ITEM_PATTERN = r'^\s*\["([\w\d ]+)"\] = (\d+)\,?[\r\n\s]*$'
+CONTAINER_RE = re.compile(r'\["([\w\d ]+)"] = {')
+ITEM_RE = re.compile(r'^\s*\["([\w\d ]+)"] = (\d+),?[\r\n\s]*$')
 
 
 class FindAllLuaFile:
@@ -22,12 +22,12 @@ class FindAllLuaFile:
         with open(self._file_path, 'r', encoding='utf8') as file:
             current_container = None
             for line in file:
-                container_match = re.match(CONTAINER_PATTERN, line)
+                container_match = CONTAINER_RE.match(line)
                 if container_match:
                     current_container = container_match.group(1)
                     self._items[current_container] = {}
                     continue
-                item_match = re.match(ITEM_PATTERN, line)
+                item_match = ITEM_RE.match(line)
                 if item_match:
                     item_id = item_match.group(1)
                     quantity = int(item_match.group(2))
