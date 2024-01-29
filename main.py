@@ -2,6 +2,7 @@ import os.path
 from tkinter.filedialog import askdirectory
 from typing import List
 
+from modules.container import CONTAINER_SORT_ORDER
 from modules.findall import FindAllLuaFile
 from modules.gearswap import GearSwapLuaFile
 from modules.windower import WindowerResources
@@ -72,14 +73,16 @@ if __name__ == "__main__":
     # TODO save findall inventory in human readable format
 
     print("\nStart of GearSwap audit:\n=========================")
-    for character, inventory in character_inventories.items():
-        print(character)
+    for character_name in character_inventories:
+        print(character_name)
         print("Equippable items not found in gearswap:")
-        for container_name in inventory:
-            if 'slip' in container_name or container_name == 'key items':
+        for container_name in CONTAINER_SORT_ORDER:
+            if (container_name not in character_inventories[character_name]
+                    or 'slip' in container_name
+                    or container_name == 'key items'):
                 continue
+
             print(' ' * 2, container_name)
-            for item_record in inventory[container_name]:
+            for item_record in character_inventories[character_name][container_name]:
                 if item_record['item']['category'] in EQUIPPABLE_ITEM_CATEGORIES and not item_record['used_in_gearswap']:
                     print(' ' * 4, item_record['item']['enl'])
-    print()
