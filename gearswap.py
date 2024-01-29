@@ -1,5 +1,6 @@
 import os.path
 import re
+from windower import Language
 from helpers import LUA_COMMENT_OPERATOR, is_quoted, remove_surrounding_quotes
 
 EMPTY_SLOT = 'empty'
@@ -52,16 +53,26 @@ class GearSwapLuaFile:
     def get_variables(self):
         return self._equipment_variables
 
-    def contains_item(self, item_name):
-        return item_name in self._equipment_names
+    def applies_to_character(self, character_name: str):
+        try:
+            return self._character_name.lower() == character_name.lower()
+        except AttributeError:
+            return len(os.path.splitext(self._filename)[0]) == 3
+        return False
+
+    def contains_item(self, item_dict: dict) -> bool:
+        for language in Language:
+            if item_dict[language.value[0]].lower() in self._equipment_names:
+                return True
+        return False
 
     def _parse_name_and_job(self):
         filename_split_by_underscore = self._filename.split('_')
         if len(filename_split_by_underscore) == 2:
             job_maybe, file_ext = os.path.splitext(filename_split_by_underscore[1])
             if len(job_maybe) == 3 and job_maybe.isupper():
-                self.name = filename_split_by_underscore[0]
-                self.job = job_maybe
+                self._character_name = filename_split_by_underscore[0]
+                self._job = job_maybe
 
     def _parse_equipment_and_variables(self):
         with open(self._file_path, 'r', encoding='utf8') as file:
@@ -76,7 +87,7 @@ class GearSwapLuaFile:
                         if is_quoted(terms[1]):
                             unquoted = remove_surrounding_quotes(terms[1])
                             if len(terms[1]) > len(unquoted):
-                                self._equipment_names.append(unquoted)
+                                self._equipment_names.append(unquoted.lower())
                         else:
                             # TODO: Attempt to look up variable's item name
                             # if re.search(AUGMENTED_ITEM_PATTERN, line):

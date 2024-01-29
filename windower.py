@@ -37,6 +37,7 @@ STRING_ITEM_PROPS = [
 
 
 class Language(Enum):
+    __order__ = " ENGLISH ENGLISH_FULL JAPANESE JAPANESE_FULL"
     ENGLISH = 'en',
     ENGLISH_FULL = 'enl',
     JAPANESE = 'ja',

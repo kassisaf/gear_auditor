@@ -6,6 +6,8 @@ from findall import FindAllLuaFile
 from windower import WindowerResources, Language
 import container
 
+EQUIPPABLE_ITEM_CATEGORIES = ['Weapon', 'Armor']
+
 
 def get_windower_path() -> str:
     # TODO: Validate path and ask again if it's not Windower (look for res path?)
@@ -55,9 +57,20 @@ if __name__ == "__main__":
                         'quantity': quantity,
                         'used_in_gearswap': False
                     }
+
+                    # Look for item in GearSwap luas
+                    if item['category'] in EQUIPPABLE_ITEM_CATEGORIES:
+                        for gearswap_lua in parsed_gearswap_luas:
+                            if not gearswap_lua.applies_to_character(character_name):
+                                continue
+                            if gearswap_lua.contains_item(item):
+                                item_record['used_in_gearswap'] = True
+                                break
+
                     character_inventories[character_name][container_name].append(item_record)
 
     # TODO save findall inventory in human readable format
+
     # TODO for each item of armor/weapon category in findall, check for presence in gearswap and mark as used/unused
 
     print()
