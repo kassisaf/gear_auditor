@@ -1,8 +1,8 @@
 import os.path
 import re
 
-from helpers import LUA_COMMENT_OPERATOR, is_quoted, remove_surrounding_quotes
-from windower import Language
+from modules.helpers import LUA_COMMENT_OPERATOR, is_quoted, remove_surrounding_quotes
+from modules.windower import Language
 
 EMPTY_SLOT = 'empty'
 EQUIPMENT_SLOTS = [
@@ -24,6 +24,7 @@ EQUIPMENT_SLOTS = [
     'waist',
 ]
 AUGMENTED_ITEM_PATTERN = r'{\s*(name)=\s*"(.+)",\s*augments\s*='
+JOB_ABBREVIATION_PATTERN = r'^[A-Z]{3}$'
 GEAR_SLOT_PATTERN = f"({'|'.join([f'({slot})' for slot in EQUIPMENT_SLOTS])})" + r"\s*=\s*"
 
 
@@ -46,7 +47,7 @@ class GearSwapLuaFile:
         return self._character_name
 
     def get_job(self):
-        return self.job
+        return self._job
 
     def get_equipment(self):
         return self._equipment_names
@@ -57,9 +58,9 @@ class GearSwapLuaFile:
     def applies_to_character(self, character_name: str):
         try:
             return self._character_name.lower() == character_name.lower()
-        except AttributeError:
-            return len(os.path.splitext(self._filename)[0]) == 3
-        return False
+        except AttributeError:  # occurs when a character name could not be parsed from the filename (will be None)
+            filename_without_extension = os.path.splitext(self._filename)[0]
+            return re.match(JOB_ABBREVIATION_PATTERN, filename_without_extension)
 
     def contains_item(self, item_dict: dict) -> bool:
         for language in Language:

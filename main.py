@@ -2,9 +2,9 @@ import os.path
 from tkinter.filedialog import askdirectory
 from typing import List
 
-from findall import FindAllLuaFile
-from gearswap import GearSwapLuaFile
-from windower import WindowerResources
+from modules.findall import FindAllLuaFile
+from modules.gearswap import GearSwapLuaFile
+from modules.windower import WindowerResources
 
 EQUIPPABLE_ITEM_CATEGORIES = ['Weapon', 'Armor']
 
