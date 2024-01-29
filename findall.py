@@ -9,7 +9,7 @@ class FindAllLuaFile:
     def __init__(self, file_path: str):
         self._file_path = file_path
         self._filename = os.path.split(file_path)[-1]
-        self._character_name = os.path.splitext(self._filename[0])
+        self._character_name = os.path.splitext(self._filename)[0]
         self._gil = -1
         self._items = {}
 
@@ -40,4 +40,13 @@ class FindAllLuaFile:
                         self._items[current_container][item_id] = quantity
                     else:
                         self._items[current_container][item_id] += quantity
-        print(self._items)
+        # print(self._items)
+
+    def get_character_name(self):
+        return self._character_name
+
+    def get_gil(self):
+        return self._gil
+
+    def get_items(self):
+        return self._items

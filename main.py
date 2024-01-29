@@ -3,7 +3,8 @@ from tkinter.filedialog import askdirectory
 from typing import List
 from gearswap import GearSwapLuaFile
 from findall import FindAllLuaFile
-from windower import WindowerResources
+from windower import WindowerResources, Language
+import container
 
 
 def get_windower_path() -> str:
@@ -19,22 +20,44 @@ def get_lua_filenames_from_dir(path: str) -> List[str]:
 
 if __name__ == "__main__":
     windower_path = get_windower_path()
-    # windower_resources = WindowerResources(windower_path)
+    windower_resources = WindowerResources(windower_path)
     gearswap_data_path = os.path.join(windower_path, 'addons', 'GearSwap', 'data')
     findall_data_path = os.path.join(windower_path, 'addons', 'findAll', 'data')
 
     if not os.path.exists(gearswap_data_path) or not os.path.exists(findall_data_path):
         print('Unable to locate either Gearswap or findAll addons in the selected path.')
 
-    gearswap_luas = get_lua_filenames_from_dir(gearswap_data_path)
-    findall_luas = get_lua_filenames_from_dir(findall_data_path)
+    # Parse GearSwap and FindAll luas
+    parsed_gearswap_luas = []
+    parsed_findall_luas = []
+    for gearswap_lua_filename in get_lua_filenames_from_dir(gearswap_data_path):
+        parsed_gearswap_luas.append(GearSwapLuaFile(gearswap_lua_filename))
+    for findall_lua_filename in get_lua_filenames_from_dir(findall_data_path):
+        parsed_findall_luas.append(FindAllLuaFile(findall_lua_filename))
 
-    # for gearswap_lua in gearswap_luas:
-    #     parsed_file = GearSwapLuaFile(gearswap_lua)
-    #     print(parsed_file)
-    #     print("   Equipment: ", parsed_file.get_equipment())
-    #     print("   Variables: ", parsed_file.get_variables())
+    # Compile a list of character inventory items
+    character_inventories = {}
+    for findall_lua in parsed_findall_luas:
+        character_name = findall_lua.get_character_name()
+        character_inventories[character_name] = {}
 
-    for findall_lua in findall_luas:
-        parsed_file = FindAllLuaFile(findall_lua)
-        print(parsed_file)
+        for container_name, item_dict in findall_lua.get_items().items():
+            if len(item_dict) > 0:
+                character_inventories[character_name][container_name] = []
+
+            for item_id, quantity in item_dict.items():
+                item = windower_resources.get_item_by_id(item_id)
+                if item is None:
+                    print(f"Warning: found unknown item id {item_id} in {character_name}'s {container_name}")
+                else:
+                    item_record = {
+                        'item': item,
+                        'quantity': quantity,
+                        'used_in_gearswap': False
+                    }
+                    character_inventories[character_name][container_name].append(item_record)
+
+    # TODO save findall inventory in human readable format
+    # TODO for each item of armor/weapon category in findall, check for presence in gearswap and mark as used/unused
+
+    print()

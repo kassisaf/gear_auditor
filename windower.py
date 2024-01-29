@@ -1,7 +1,6 @@
 import os
 import re
 from enum import Enum
-from typing import Optional
 from helpers import remove_surrounding_quotes
 
 ITEM_LINE_PATTERN = r"^\s*\[\d+\] = {(.+)},$"
@@ -84,8 +83,10 @@ class WindowerResources:
                         elif k in STRING_ITEM_PROPS:
                             item[k] = remove_surrounding_quotes(item[k])
 
-                    # TODO actually do something with the item
-                    # print(item)
+                    self._items[item['id']] = item
 
-    def get_item_name_from_id(self, item_id: int, language: Optional[Language] = Language.ENGLISH_FULL):
-        return self._items[item_id]
+    def get_item_by_id(self, item_id: int):
+        try:
+            return self._items[item_id]
+        except KeyError:
+            return None

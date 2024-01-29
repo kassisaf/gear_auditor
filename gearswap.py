@@ -52,6 +52,9 @@ class GearSwapLuaFile:
     def get_variables(self):
         return self._equipment_variables
 
+    def contains_item(self, item_name):
+        return item_name in self._equipment_names
+
     def _parse_name_and_job(self):
         filename_split_by_underscore = self._filename.split('_')
         if len(filename_split_by_underscore) == 2:
