@@ -23,9 +23,9 @@ EQUIPMENT_SLOTS = [
     'neck',
     'waist',
 ]
-AUGMENTED_ITEM_RE = re.compile(r'(\S+) *= *{\s*name *=(.+),\s*augments *= *{')
-JOB_ABBREVIATION_RE = re.compile(r'^[A-Z]{3}$')
-GEAR_SLOT_RE = re.compile(f"({'|'.join([f'(?:{slot})' for slot in EQUIPMENT_SLOTS])})" + r" *= *([^,\r\n]+),?")
+AUGMENTED_ITEM_PATTERN = re.compile(r'(\S+) *= *{\s*name *=(.+),\s*augments *= *{')
+GEAR_SLOT_PATTERN = re.compile(f"({'|'.join([f'(?:{slot})' for slot in EQUIPMENT_SLOTS])})" + r" *= *([^,\r\n]+),?")
+JOB_ABBREVIATION_PATTERN = re.compile(r'^[A-Z]{3}$')
 
 
 class GearSwapLuaFile:
@@ -60,7 +60,7 @@ class GearSwapLuaFile:
             return self._character_name.lower() == character_name.lower()
         except AttributeError:  # occurs when a character name could not be parsed from the filename (will be None)
             filename_without_extension = os.path.splitext(self._filename)[0]
-            return JOB_ABBREVIATION_RE.match(filename_without_extension)
+            return JOB_ABBREVIATION_PATTERN.match(filename_without_extension)
 
     def contains_item(self, item_dict: dict) -> bool:
         for language in Language:
@@ -85,7 +85,7 @@ class GearSwapLuaFile:
                     continue
 
                 # Handle lines following the pattern: slot = item
-                gear_slot_search = GEAR_SLOT_RE.search(line)
+                gear_slot_search = GEAR_SLOT_PATTERN.search(line)
                 if gear_slot_search is not None:
                     slot, item_name = gear_slot_search.groups()
                     if item_name == EMPTY_SLOT:
@@ -94,7 +94,7 @@ class GearSwapLuaFile:
                     continue
 
                 # Handle lines defining an augmented item
-                augmented_item_search = AUGMENTED_ITEM_RE.search(line)
+                augmented_item_search = AUGMENTED_ITEM_PATTERN.search(line)
                 if augmented_item_search is not None:
                     item_variable, item_name = augmented_item_search.groups()
                     print(f'found augmented item: {item_variable} = {item_name}')
