@@ -1,6 +1,7 @@
 import os
 import re
 from enum import Enum
+
 from helpers import remove_surrounding_quotes
 
 ITEM_LINE_PATTERN = r"^\s*\[\d+\] = {(.+)},$"

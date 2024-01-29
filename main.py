@@ -1,10 +1,10 @@
 import os.path
 from tkinter.filedialog import askdirectory
 from typing import List
-from gearswap import GearSwapLuaFile
+
 from findall import FindAllLuaFile
-from windower import WindowerResources, Language
-import container
+from gearswap import GearSwapLuaFile
+from windower import WindowerResources
 
 EQUIPPABLE_ITEM_CATEGORIES = ['Weapon', 'Armor']
 
@@ -71,6 +71,15 @@ if __name__ == "__main__":
 
     # TODO save findall inventory in human readable format
 
-    # TODO for each item of armor/weapon category in findall, check for presence in gearswap and mark as used/unused
-
+    print("\nStart of GearSwap audit:\n=========================")
+    for character, inventory in character_inventories.items():
+        print(character)
+        print("Equippable items not found in gearswap:")
+        for container_name in inventory:
+            if 'slip' in container_name or container_name == 'key items':
+                continue
+            print(' ' * 2, container_name)
+            for item_record in inventory[container_name]:
+                if item_record['item']['category'] in EQUIPPABLE_ITEM_CATEGORIES and not item_record['used_in_gearswap']:
+                    print(' ' * 4, item_record['item']['enl'])
     print()

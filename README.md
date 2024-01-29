@@ -13,6 +13,5 @@ Gear auditor is a script that will extract your FFXI characters' inventory using
 
 1. Download and install the latest version of [Python](https://www.python.org/downloads/)
 2. Download and extract this repo (or git clone it)
-3. Install the required libraries `python -m pip install -r requirements.txt`
-4. Run main.py
-5. Browse to your Windower folder and click ok
+3. Run main.py
+4. Browse to and select your Windower folder

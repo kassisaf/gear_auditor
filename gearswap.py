@@ -1,7 +1,8 @@
 import os.path
 import re
-from windower import Language
+
 from helpers import LUA_COMMENT_OPERATOR, is_quoted, remove_surrounding_quotes
+from windower import Language
 
 EMPTY_SLOT = 'empty'
 EQUIPMENT_SLOTS = [

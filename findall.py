@@ -1,5 +1,5 @@
+import os.path
 import re
-import os
 
 CONTAINER_PATTERN = r'\["([\w\d ]+)"\] = {'
 ITEM_PATTERN = r'^\s*\["([\w\d ]+)"\] = (\d+)\,?[\r\n\s]*$'
