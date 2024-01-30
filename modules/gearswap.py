@@ -35,13 +35,12 @@ class GearSwapLuaFile:
         self._character_name = None
         self._job = None
         self._equipment_names = []
-        self._equipment_variables = []
 
         self._parse_name_and_job()
         self._parse_equipment_and_variables()
 
     def __str__(self):
-        return f"{self._filename} [{len(self._equipment_names)}n/{len(self._equipment_variables)}v] {self.__class__}"
+        return f"{self._filename} [{len(self._equipment_names)}] {self.__class__}"
 
     def get_character(self):
         return self._character_name
@@ -51,9 +50,6 @@ class GearSwapLuaFile:
 
     def get_equipment(self):
         return self._equipment_names
-
-    def get_variables(self):
-        return self._equipment_variables
 
     def applies_to_character(self, character_name: str):
         try:
@@ -102,7 +98,6 @@ class GearSwapLuaFile:
                     continue
 
         self._equipment_names = list(set(self._equipment_names))
-        self._equipment_variables = list(set(self._equipment_variables))
 
     def _add_equipment(self, item_name: str):
         unquoted_item_name = remove_surrounding_quotes(item_name)

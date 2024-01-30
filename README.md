@@ -7,15 +7,16 @@ Gear auditor is a script that will extract your FFXI characters' inventory using
 ### Planned Features
 
 - Generate a spreadsheet with full inventory information for all characters
-- Identify items that could be moved to storage slips
-- Calculate number of shards and voids needed based on your current relic upgrade levels
+- Highlight items that could be moved to storage slips
+- Highlight duplicate Sortie earrings
 - Display POL sendable flag (identify mule-able items)
+- Calculate number of shards and voids needed based on your current relic upgrade levels
 - Generate checklists for Unity, HTMB, etc. (maybe?)
 
-### Requirements
+### Prerequisites
 - Windower 4 installation with the `GearSwap` and `findall` addons installed
 - `findall` must have been loaded at least once to generate the necessary inventory data
-- Gear must be present **as strings** in luas within your `GearSwap` data folder.  **Currently, item variables are *not* parsed as items.**
+- GearSwap must contain one or more lua files applicable to your character (either prefixed with character's name or in the format of JOB.lua) 
 
 ### How do I run it?
 
