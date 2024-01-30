@@ -83,6 +83,9 @@ if __name__ == "__main__":
                 continue
 
             print(' ' * 2, container_name)
-            for item_record in character_inventories[character_name][container_name]:
+            sorted_inventory = sorted(character_inventories[character_name][container_name],
+                                      key=lambda x: x['item']['enl'].lower())
+            for item_record in sorted_inventory:
                 if item_record['item']['category'] in EQUIPPABLE_ITEM_CATEGORIES and not item_record['used_in_gearswap']:
                     print(' ' * 4, item_record['item']['enl'])
+        print()
