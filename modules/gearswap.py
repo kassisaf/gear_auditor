@@ -24,8 +24,8 @@ EQUIPMENT_SLOTS = [
     'waist',
 ]
 AUGMENTED_ITEM_PATTERN = re.compile(r'(\S+) *= *{\s*name *=(.+),\s*augments *= *{')
-GEAR_SLOT_PATTERN = re.compile(f"({'|'.join([f'(?:{slot})' for slot in EQUIPMENT_SLOTS])})" + r" *= *([^,\r\n]+),?")
-JOB_ABBREVIATION_PATTERN = re.compile(r'^[A-Z]{3}$')
+GEAR_SLOT_PATTERN = re.compile(f"({'|'.join([f'(?:{slot})' for slot in EQUIPMENT_SLOTS])})" + r" *= *([^,\r\n]{4,}),?")
+JOB_ABBREVIATION_PATTERN = re.compile(r'^[A-Za-z]{3}$')
 
 
 class GearSwapLuaFile:
